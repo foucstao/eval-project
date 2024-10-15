@@ -1,0 +1,51 @@
+[
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "worker1",
+		"indexCode" : "Certificate",
+		"inputValue" : 12
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "mac1",
+		"indexCode" : "LifeTime",
+		"inputValue" : 14
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "mac1",
+		"indexCode" : "numberOfFailure",
+		"inputValue" : 10
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "worker",
+		"indexCode" : null,
+		"inputValue" : 5
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "machine",
+		"indexCode" : "LifeTime",
+		"inputValue" : 6
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "workermachine",
+		"indexCode" : null,
+		"inputValue" : 0
+	},
+	{
+		"evalInstance" : "evalworkshopi1001",
+		"evalObjCode" : "workshop",
+		"nodeCode" : "mac1",
+		"indexCode" : "MacState",
+		"inputValue" : null
+	}
+]

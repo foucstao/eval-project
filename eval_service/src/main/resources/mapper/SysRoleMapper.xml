@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.mapper.SysRoleMapper">
+	<resultMap id="BaseResultMap" type="com.base.pojo.SysRole">
+		<id column="id" property="id" />
+		<result column="role_name" property="roleName" />
+		<result column="role_key" property="roleKey" />
+		<result column="role_sort" property="roleSort" />
+		<result column="create_time" property="createTime" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<sql id="selectSysRoleVo">
+		select id,`role_name`, role_key,role_sort, create_time,remark from sys_role
+	</sql>
+
+	<delete id="deletesByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_role
+		where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<insert id="insert" parameterType="com.base.pojo.SysRole">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into sys_role (`role_name`, role_key,role_sort, create_time,remark)
+		values (#{roleName}, #{roleKey}, #{roleSort}, sysdate(), #{remark})
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.base.pojo.SysRole">
+		update sys_role
+		set `role_name` = #{roleName},
+		role_key = #{roleKey},
+		role_sort = #{roleSort},
+		remark = #{remark}
+		where id = #{id}
+	</update>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		<include refid="selectSysRoleVo" />
+		where id = #{id}
+	</select>
+
+	<select id="selectList" resultMap="BaseResultMap">
+		<include refid="selectSysRoleVo" />
+		<where>
+		<if test="condition !=null and condition !=''">
+			 ${condition}
+		</if>
+		</where>
+		order by role_sort
+	</select>
+
+	<select id="selectByIds" resultMap="BaseResultMap">
+		<include refid="selectSysRoleVo" />
+		where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+</mapper>

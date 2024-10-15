@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalIndexModelMapper">
+
+	<resultMap type="com.eval.pojo.EvalIndexModel" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="indexModel" column="index_model" />
+		<result property="nodeType" column="node_type" />
+		<result property="indexCode" column="index_code" /> 
+		<result property="weight" column="weight" />
+		<result property="membership" column="membership" />
+	</resultMap>
+
+	<sql id="selectAll">
+		select id, index_model, node_type, index_code, weight, membership
+		from eval_index_model
+	</sql>
+
+
+
+	<select id="selectByIndexModel" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where index_model = #{indexModel}
+	</select>
+
+
+	<select id="selectByIndexModelAndNodeType" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where index_model = #{indexModel} and node_type = #{nodeType}
+	</select>
+
+	<select id="selectModelByObj" parameterType="com.eval.pojo.EvalIndexModel" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test='indexModel !=null and indexModel!=""'> and index_model = #{indexModel} </if>
+			<if test="nodeType !=null and nodeType !=''"> and node_type = #{nodeType} </if>
+			<if test="indexCode !=null and indexCode !=''"> and index_code = #{indexCode}</if>
+			<if test="indexCode !=null and indexCode !=''"> and membership = #{membership}</if>
+		</where> 
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_index_model
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalIndexModel">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+
+		insert into eval_index_model (index_model, node_type, index_code, weight, membership)
+		values (#{indexModel}, #{nodeType}, #{indexCode}, #{weight}, #{membership} )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalIndexModel">
+		update eval_index_model
+		set
+		<if test="indexModel !=null and indexModel!=''">index_model = #{indexModel},</if>
+		<if test="nodeType !=null and nodeType !=''">node_type = #{nodeType},</if>
+		<if test="indexCode !=null and indexCode !=''">index_code = #{indexCode},</if>
+		<if test="membership !=null and membership !=''">membership = #{membership},</if>
+		<if test="weight !=null and weight !=''">weight = #{weight}</if>
+		where id = #{id}
+	</update>
+
+</mapper>

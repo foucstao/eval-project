@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.IndexImportanceMapper">
+
+	<resultMap type="com.eval.pojo.IndexImportance" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="indexFirst" column="index_first" />
+		<result property="indexSecond" column="index_second" />
+		<result property="importance" column="importance" />
+		<result property="version" column="version" />
+
+	</resultMap>
+
+	<sql id="selectAll">
+		select id, index_first, index_second, importance, version from index_importance
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+	<select id="selectByIndexFirst" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where index_first = #{index_first}
+	</select>
+
+	<select id="selectByObj" parameterType="com.eval.pojo.IndexImportance" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test="indexFirst !=null and indexFirst!=''"> and index_first = #{indexFirst}</if>
+			<if test="indexSecond !=null and indexSecond !=''">and index_second = #{indexSecond}</if>
+			<if test="version !=null and version !=''">and version = #{version}</if>
+			<if test="importance !=null and importance!=''">and importance = #{importance}</if>
+		</where> 
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from index_importance
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.IndexImportance">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into index_importance (index_first, index_second, importance, version)
+		values (#{indexFirst}, #{indexSecond}, #{importance},#{version}  )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.IndexImportance">
+		update index_importance
+		set
+		<if test="indexFirst !=null and indexFirst!=''">index_first = #{indexFirst},</if>
+		<if test="indexSecond !=null and indexSecond !=''">index_second = #{indexSecond},</if>
+		<if test="importance !=null and importance !=''">importance = #{importance},</if>
+		<if test="version !=null and version !=''">version = #{version}</if>
+		where id = #{id}
+	</update>
+
+</mapper>

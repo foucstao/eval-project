@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalObjectMapper">
+
+	<resultMap type="com.eval.pojo.EvalObject" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="evalObj" column="eval_obj" />
+		<result property="evalCode" column="eval_code" />
+		<result property="evalMethod" column="eval_method" />
+		<result property="description" column="description" />
+		<result property="institution" column="institution" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+
+	</resultMap>
+
+	<sql id="selectAll">
+		select id, eval_obj, eval_code, eval_method, description, institution, create_time, update_time from eval_object
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+	<select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where eval_code = #{eval_code}
+	</select>
+
+	<select id="findByInstitution" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where institution = #{institution}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_object
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalObject">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into eval_object (eval_obj, eval_code, eval_method, description, institution)
+		values (#{evalObj}, #{evalCode}, #{evalMethod}, #{description}, #{institution} )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalObject">
+		update eval_object
+		set
+		<if test="evalObj !=null and evalObj!=''">eval_obj = #{evalObj},</if>
+		<if test="evalCode !=null and evalCode !=''">eval_code = #{evalCode},</if>
+		<if test="evalMethod !=null and evalMethod !=''">eval_method = #{evalMethod},</if>
+		<if test="institution !=null and institution !=''">institution = #{institution},</if>
+		update_time = sysdate(),  
+		description = #{description}
+		where id = #{id}
+	</update>
+</mapper>

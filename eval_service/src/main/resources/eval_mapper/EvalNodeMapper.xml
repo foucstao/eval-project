@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalNodeMapper">
+
+	<resultMap type="com.eval.pojo.EvalNode" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="pid" column="pid" />
+		<result property="source" column="source" />
+		<result property="sink" column="sink" />
+		<result property="nodeType" column="node_type" />
+		<result property="relationType" column="relation_type" />
+		<result property="code" column="code" />
+		<result property="pcode" column="pcode" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="institution" column="institution" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+
+	</resultMap>
+
+	<sql id="selectAll">
+		select * from eval_node
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+
+	<select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where code = #{code}
+	</select>
+	<select id="selectByPcode" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where pcode = #{pcode}
+	</select>
+
+	<select id="findByInstitution" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where institution = #{institution}
+	</select>
+
+	<!-- List<EvalNode> selectNodeByType(String relationType); -->
+
+	<select id="selectNodeByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where relation_type = #{relationType}
+	</select>
+
+	<!-- List<EvalNode> selectNodesByObj(EvalNode node); -->
+	<select id="selectNodesByObj" parameterType="com.eval.pojo.EvalNode" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test='name != null and name != ""'> and name like concat('%',#{name},'%') </if>
+			<if test="pid !=null and pid!=''"> and pid = #{pid}</if>
+			<if test="source !=null and source !=''">and source = #{source}</if>
+			<if test="sink !=null and sink !=''">and sink = #{sink}</if>
+			<if test="nodeType !=null and nodeType !=''">and node_type = #{nodeType}</if>
+			<if test="relationType !=null and relationType!=''">and relation_type = #{relationType}</if>
+			<if test="code !=null and code!=''">and code = #{code}</if>
+			<if test="pcode !=null and pcode!=''">and pcode = #{pcode}</if>
+			<if test="institution !=null and institution!=''">and institution = #{institution}</if>
+		</where> 
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_node
+		where id = #{id}
+	</delete>
+
+	
+	<insert id="insert" parameterType="com.eval.pojo.EvalNode">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into eval_node (pid, source, sink, node_type, relation_type, code, pcode,  
+		name, description, institution)
+		values (#{pid}, #{source}, #{sink},#{nodeType}, #{relationType}, 
+		#{code},#{pcode},#{name}, #{description}, #{institution} )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalNode">
+		update eval_node
+		set
+		<if test="pid !=null and pid!=''">pid = #{pid},</if>
+		<if test="source !=null and source !=''">source = #{source},</if>
+		<if test="sink !=null and sink !=''">sink = #{sink},</if>
+		<if test="nodeType !=null and nodeType !=''">node_type = #{nodeType},</if>
+		<if test="relationType !=null and relationType!=''">relation_type = #{relationType},</if>
+		<if test="code !=null and code!=''">code = #{code},</if>
+		<if test="pcode !=null and pcode!=''">pcode = #{pcode},</if>
+		<if test="name !=null and name!=''">name = #{name},</if>
+		<if test="institution !=null and institution!=''">institution = #{institution},</if>
+		update_time = sysdate(),  
+		description = #{description}
+		where id = #{id}
+	</update>
+
+
+	<update id="updatePidByInstitution" parameterType="java.lang.String">
+		UPDATE eval_node u
+		JOIN eval_node uf ON u.pcode = uf.code and  uf.institution=#{institution}
+		SET u.pid = uf.id
+		WHERE u.institution=#{institution} and u.pid=0;
+	</update>
+</mapper>

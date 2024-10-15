@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.mapper.SysMenuRoleMapper">
+
+	<resultMap id="BaseResultMap" type="com.base.pojo.SysMenuRole">
+		<id column="id" property="id" />
+		<result column="role_id" property="roleId" />
+		<result column="menu_ids" property="menuIds" />
+		<result column="select_ids" property="selectIds" />
+	</resultMap>
+
+	<sql id="selectSysMenuRoleVo">
+		select id,role_id,menu_ids,select_ids from sys_menu_role
+	</sql>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_menu_role
+		where role_id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.base.pojo.SysMenuRole">
+		insert into sys_menu_role (role_id,menu_ids,select_ids)
+		values (#{roleId}, #{menuIds},#{selectIds})
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.base.pojo.SysMenuRole">
+		update sys_menu_role
+		set
+		<if test="roleId !=null and roleId !=''">
+			role_id = #{roleId},
+		</if>
+		<if test="menuIds !=null and menuIds !=''">
+			menu_ids=#{menuIds},
+		</if>
+		select_ids=#{selectIds}
+		where id = #{id}
+	</update>
+
+	<update id="updateByRoleId" parameterType="com.base.pojo.SysMenuRole">
+		update sys_menu_role
+		set
+		menu_ids=#{menuIds},
+		select_ids=#{selectIds}
+		where role_id = #{roleId}
+	</update>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		<include refid="selectSysMenuRoleVo" />
+		where id = #{id}
+	</select>
+
+	<select id="selectList" resultMap="BaseResultMap">
+		<include refid="selectSysMenuRoleVo" />
+	</select>
+
+	<select id="selectByRoleId" resultMap="BaseResultMap">
+		<include refid="selectSysMenuRoleVo" />
+		where role_id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<delete id="deleteByRoleId" parameterType="java.lang.Long">
+		delete from sys_menu_role
+		where role_id =#{roleId}
+	</delete>
+</mapper>

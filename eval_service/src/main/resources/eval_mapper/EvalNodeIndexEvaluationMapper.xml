@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalNodeIndexEvaluationMapper">
+
+	<resultMap type="com.eval.pojo.EvalNodeIndexEvaluation" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="evalInstance" column="eval_instance" />
+		<result property="indexModel" column="index_model" />
+		<result property="evalObjCode" column="eval_obj_code" />
+		<result property="nodeCode" column="node_code" />
+		<result property="indexCode" column="index_code" />
+		<result property="inputValue" column="input_value" />
+		<result property="membership" column="membership" />
+		<result property="rating" column="rating" />
+		<result property="evalValue" column="eval_value" />
+		<result property="description" column="description" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+
+	</resultMap>
+
+	<!-- <resultMap type="com.eval.vo.EvalNodeIndexEvaluationVo" id="ExtendedResultMap">
+		<result property="eid" column="eid" />
+		<result property="id" column="id" />
+		<result property="evalInstance" column="eval_instance" />
+		<result property="evalObjCode" column="eval_obj_code" />
+		<result property="indexModel" column="index_model" />
+		<result property="pid" column="pid" />
+		<result property="nodeCode" column="node_code" />
+		<result property="nodeName" column="node_name" />
+		<result property="source" column="source" />
+		<result property="sink" column="sink" />
+		<result property="nodeType" column="node_type" />
+		<result property="isLeaf" column="is_leaf" />
+		<result property="relationType" column="relation_type" />
+		<result property="indexCode" column="index_code" />
+		<result property="indexName" column="index_name" />
+		<result property="membership" column="membership" />
+		<result property="inputValue" column="input_value" />
+		<result property="description" column="description" />
+		<result property="evalValue" column="eval_value" />
+	</resultMap> -->
+
+	<sql id="selectAll">
+		select *  from eval_node_index_evaluation
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+	<select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where node_code = #{code}
+	</select>
+
+	<select id="selectAllNodesJoinIndexesByEvalObj"
+	 resultType="com.eval.vo.EvalNodeIndexEvaluationVo">
+		select a.id as eid, a.eval_instance, a.eval_obj_code, b.id,b.pid,a.node_code, 
+			b.name as node_name, 
+			b.source, b.sink, b.node_type, b.relation_type, 
+			b.is_leaf, a.index_code, a.membership, 
+			a.rating, a.input_value, a.eval_value 
+			from eval_node_index_evaluation as a
+			left join eval_node as b
+			on a.node_code = b.code
+			where a.eval_obj_code = #{eval_obj}
+	</select>
+
+	<select id="selectNodeIndexesByInstance" resultType="com.eval.vo.EvalNodeIndexEvaluationVo">
+		SELECT a.id as eid, a.eval_instance, 
+			a.eval_obj_code, b.id, b.pid,
+		    a.node_code, b.name as node_name, 
+			b.node_type, b.relation_type, 
+			b.is_leaf, a.index_code, a.membership, 
+			a.rating, a.input_value, a.eval_value 
+			FROM eval_node_index_evaluation AS a
+			LEFT JOIN eval_node AS b
+			ON a.node_code = b.code
+			WHERE a.eval_instance = #{evalInstance}
+	</select>
+
+	<select id="selectByInstanceSimple" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+			where eval_instance = #{instance}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_node_index_evaluation
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalNodeIndexEvaluation">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into eval_node_index_evaluation (
+			eval_instance, eval_obj_code, index_model, node_code, 
+			index_code, rating, membership,  
+			input_value, eval_value, description, create_time)
+		values (
+			#{evalInstance}, #{evalObjCode}, #{indexModel}, 
+			#{nodeCode}, #{indexCode},#{rating} ,#{membership}
+			, #{inputValue} , #{evalValue},#{description}, sysdate())
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalNodeIndexEvaluation">
+		update eval_node_index_evaluation
+		set
+		<if test="evalInstance !=null and evalInstance !=''">eval_instance = #{evalInstance},</if>
+		<if test="evalObjCode !=null and evalObjCode !=''">eval_obj_code = #{evalObjCode},</if>
+		<if test="indexModel !=null and indexModel !=''">index_model = #{indexModel},</if>
+		<if test="nodeCode !=null and nodeCode!=''">node_code = #{nodeCode},</if>
+		<if test="indexCode !=null and indexCode !=''">index_code = #{indexCode},</if>
+		<if test="rating !=null and rating !=''">rating = #{rating},</if>
+		<if test="membership !=null and membership !=''">membership = #{membership},</if>
+		<if test="inputValue !=null and inputValue !=''">input_value = #{inputValue},</if>
+		<if test="evalValue !=null">eval_value = #{evalValue},</if>
+		description = #{description},
+		update_time = sysdate()  
+		where id = #{id}
+	</update>
+
+	<select id="selectByCondition" parameterType="com.eval.pojo.EvalNodeIndexEvaluation" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test='evalInstance !=null and evalInstance!=""'> and eval_instance = #{evalInstance} </if>
+			<if test="evalObjCode !=null and evalObjCode !=''"> and eval_obj_code = #{evalObjCode} </if>
+			<if test="nodeCode !=null and nodeCode !=''"> and node_code = #{nodeCode}</if>
+			<if test="indexCode !=null and indexCode !=''"> and index_code = #{indexCode}</if>
+			<if test="rating !=null and rating !=''"> and rating = #{rating}</if>
+			<if test="membership !=null and membership !=''"> and membership = #{membership}</if>
+		</where> 
+	</select>
+
+	<select id="selectEvalGroupbyNodeTypeRating" 
+	parameterType="com.eval.pojo.EvalObjIndexModel" 
+	resultType="com.eval.vo.NodeTypeEvalVo">
+		SELECT c.eval_instance, c.eval_obj_code, c.node_type, 
+			c.rating, ${clusterFunction}(c.eval_value) as eval_value 
+		FROM (SELECT a.*, b.node_type,b.pid 
+			FROM eval_node_index_evaluation a, eval_node b 
+			where a.node_code=b.code
+			) c 
+		where c.eval_instance = #{evalInstance} 
+		group by c.eval_instance,c.node_type, c.rating
+	</select>
+
+	<select id="evalOnNodeTypeRating" 
+	parameterType="com.eval.pojo.EvalObjIndexModel" 
+	resultType="com.eval.vo.NodeTypeEvalVo">
+		SELECT c.eval_instance, c.eval_obj_code, c.node_type, 
+			c.rating, ${clusterFunction}(c.eval_value) as eval_value 
+		FROM (SELECT a.*, b.node_type, b.pcode  
+			FROM eval_node_index_evaluation a, evalobj_node_index_value b 
+			where a.node_code=b.node_code 
+			and a.eval_instance = #{evalInstance} 
+			and b.eval_instance = #{evalInstance} 
+			) c 
+		group by c.eval_instance,c.node_type, c.rating
+	</select>
+
+	
+</mapper>

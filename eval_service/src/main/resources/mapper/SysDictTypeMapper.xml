@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.mapper.SysDictTypeMapper">
+
+  <resultMap type="com.base.pojo.SysDictType" id="BaseResultMap">
+        <result property="id"    column="id"    />
+        <result property="dictName"    column="dict_name"    />
+        <result property="dictType"    column="dict_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+    
+     <sql id="selectSysDictTypeVo">
+        select id, dict_name, dict_type, create_time, remark from sys_dict_type
+    </sql>
+    
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sys_dict_type
+    where id = #{id}
+  </delete>
+  
+  <delete id="deletesByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_dict_type
+		where id in
+		<foreach item="id" collection="array" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+  
+  <insert id="insert" parameterType="com.base.pojo.SysDictType">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_dict_type (dict_name,dict_type,create_time,remark)
+    values (#{dictName}, #{dictType}, sysdate(), #{remark} )
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.base.pojo.SysDictType">
+    update sys_dict_type
+    set 
+    <if test="dictName !=null and dictName !=''">dict_name = #{dictName},</if>
+    <if test="dictType !=null and dictType !=''">dict_type = #{dictType},</if>
+    remark = #{remark}
+    where id = #{id}
+  </update>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <include refid="selectSysDictTypeVo"/>
+    where id = #{id}
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+    <include refid="selectSysDictTypeVo"/>
+    <where>
+		<if test="condition !=null and condition !=''">
+			 ${condition}
+		</if>
+		</where>
+  </select>
+  
+</mapper>

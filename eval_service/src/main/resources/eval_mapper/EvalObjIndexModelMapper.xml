@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalObjIndexModelMapper">
+
+	<resultMap type="com.eval.pojo.EvalObjIndexModel" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="evalInstance" column="eval_instance" />
+		<result property="evalObjCode" column="eval_obj_code" />
+		<result property="indexModel" column="index_model" />
+		<result property="importanceVersion" column="importance_version" />
+		<result property="clusterFunction" column="cluster_function" />
+		<result property="rateVersion" column="rate_version" />
+		<result property="institution" column="institution" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+
+	</resultMap>
+
+	<sql id="selectAll">
+		select id, eval_instance, eval_obj_code, index_model, 
+		importance_version, cluster_function, rate_version, institution, create_time, update_time
+		from evalobj_indexmodel
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+
+	<select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where eval_obj_code = #{obj}
+	</select>
+
+
+	<select id="selectByInstance" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where eval_instance = #{evalInstance}
+	</select>
+
+	<select id="findByInstitution" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where institution = #{institution}
+	</select>
+
+
+
+	
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from evalobj_indexmodel
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalObjIndexModel">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+
+		insert into evalobj_indexmodel (eval_instance, eval_obj_code, 
+		index_model, importance_version, cluster_function, rate_version,institution, create_time )
+		values (#{evalInstance}, #{evalObjCode}, #{indexModel}, 
+		#{importanceVersion}, #{clusterFunction}, #{rateVersion}, #{institution}, sysdate() )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalObjIndexModel">
+		update evalobj_indexmodel
+		set
+		<if test="evalInstance !=null and evalInstance !=''">eval_instance = #{evalInstance},</if>
+		<if test="evalObjCode !=null and evalObjCode !=''">eval_obj_code = #{evalObjCode},</if>
+		<if test="importanceVersion !=null and importanceVersion !=''">importance_version = #{importanceVersion},</if>
+		<if test="rateVersion !=null and rateVersion !=''">rate_version = #{rateVersion},</if>
+		<if test="clusterFunction !=null and clusterFunction !=''">cluster_function = #{clusterFunction},</if>
+		<if test="indexModel !=null and indexModel!=''">index_model = #{indexModel}, </if>
+		<if test="institution !=null and institution!=''">institution = #{institution}, </if>
+		update_time = sysdate()  
+		where id = #{id}
+	</update>
+
+
+	<select id="selectByCondition" parameterType="com.eval.pojo.EvalObjIndexModel" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test="institution !=null and institution !=''"> and institution = #{institution}</if>
+			<if test='evalInstance !=null and evalInstance!=""'> and eval_instance = #{evalInstance} </if>
+			<if test="evalObjCode !=null and evalObjCode !=''"> and eval_obj_code = #{evalObjCode} </if>
+			<if test="indexModel !=null and indexModel !=''"> and index_model = #{indexModel}</if>
+		</where> 
+	</select>
+
+</mapper>

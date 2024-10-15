@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.NodeTypeMapper">
+
+	<resultMap type="com.eval.pojo.NodeType" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+
+	</resultMap>
+
+	<select id="selectNodeByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where relation_type = #{relationType}
+	</select>
+
+	<sql id="selectAll">
+		select id, code, name ,relation_type, description from node_type
+	</sql>
+
+	<select id="selectDataAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+	<select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where code = #{code}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from node_type
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.NodeType">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into node_type (code, name, relation_type,description)
+		values (#{code}, #{name}, #{relationType},#{description} )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.NodeType">
+		update node_type
+		set code = #{code}, name = #{name}, relation_type = #{relationType}, description = #{description}
+<!--&#45;&#45; 		<if test="code !=null and code!=''">code = #{code},</if>-->
+<!--&#45;&#45; 		<if test="name !=null and name !=''">name = #{name},</if>-->
+<!--&#45;&#45; 		relation_type = #{relationType}-->
+<!--&#45;&#45; 		<if test="relationType != null and relationType != ''">relation_type = #{relationType},</if>-->
+<!--&#45;&#45; 		description = #{description}-->
+		where id = #{id}
+	</update>
+
+</mapper>

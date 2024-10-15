@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalIndexMapper">
+
+	<resultMap type="com.eval.pojo.EvalIndex" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="pid" column="pid" />
+		<result property="code" column="code" />
+		<result property="pcode" column="pcode" />
+		<result property="name" column="name" />
+		<result property="nodeType" column="node_type" />
+		<result property="relationType" column="relation_type" />
+		<result property="isLeaf" column="is_leaf" />
+		<result property="description" column="description" />
+		<!-- <result property="affiliation" column="affiliation" />
+		<result property="param1" column="param1" />
+		<result property="param2" column="param2" />
+		<result property="param3" column="param3" />
+		<result property="param4" column="param4" /> -->
+	</resultMap>
+
+	<sql id="selectAll">
+		select id, pid, code, pcode, name, node_type, relation_type, is_leaf, description
+		<!-- , affiliation, param1, param2, param3, param4  -->
+		from eval_index
+	</sql>
+
+	<select id="selectIndexAll" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+	</select>
+
+	<select id="selectByIndexCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where code = #{code}
+	</select>
+
+	<!-- List<EvalNode> selectIndexByType(String relationType); -->
+
+	<select id="selectIndexByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where relation_type = #{relationType}
+	</select>
+
+	<select id="selectIndexByNodeType" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where node_type = #{nodeType}
+	</select>
+
+	<delete id="deleteByIndexCode" parameterType="java.lang.String">
+		delete from eval_index where code = #{code}
+	</delete>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_index
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalIndex">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+
+		insert into eval_index (pid, code, pcode, name, relation_type, 
+		is_leaf, description)
+		values (#{pid}, #{code}, #{pcode},#{name}, #{relationType},
+		#{isLeaf}, #{description} )
+		
+		<!-- insert into eval_index (pid, code, pcode, name, relation_type, 
+		is_leaf, description, affiliation, 
+		param1, param2, param3, param4)
+		values (#{pid}, #{code}, #{pcode},#{name}, #{relationType},
+		#{isLeaf}, #{description}, #{affiliation},#{param1}, #{param2},
+		#{param3}, #{param4} ) -->
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalIndex">
+		update eval_index
+		set
+		<if test="pid !=null and pid!=''">pid = #{pid},</if>
+		<if test="code !=null and code !=''">code = #{code},</if>
+		<if test="pcode !=null and pcode !=''">pcode = #{pcode},</if>
+		<if test="name !=null and name !=''">name = #{name},</if>
+		<if test="relationType !=null and relationType !=''">relation_type = #{relationType},</if>
+		<if test="isLeaf !=null and isLeaf !=''">is_leaf = #{isLeaf},</if>
+		<!-- <if test="affiliation !=null and affiliation !=''">affiliation = #{affiliation},</if>
+		<if test="param1 !=null and param1 !=''">param1 = #{param1},</if>
+		<if test="param2 !=null and param2 !=''">param2 = #{param2},</if>
+		<if test="param3 !=null and param3 !=''">param3 = #{param3},</if>
+		<if test="param4 !=null and param4 !=''">param4 = #{param4},</if> -->
+		description = #{description}
+		where id = #{id}
+	</update>
+
+</mapper>

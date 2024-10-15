@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eval.mapper.EvalObjEvaluationMapper">
+	<resultMap type="com.eval.pojo.EvalObjEvaluation" id="BaseResultMap">
+		<result property="id" column="id" />
+		<result property="evalInstance" column="eval_instance" />
+		<result property="evalObjCode" column="eval_obj_code" />
+		<result property="rating" column="rating" />
+		<result property="evalValue" column="eval_value" />
+		<result property="description" column="description" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="selectAll">
+		select  * from eval_obj_evaluation
+	</sql>
+
+	<select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<include refid="selectAll" />
+		where eval_obj_code = #{obj}
+	</select>
+
+	<select id="selectByInstance" parameterType="java.lang.String" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		where eval_instance = #{evalInstance}
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from eval_obj_evaluation
+		where id = #{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.eval.pojo.EvalObjEvaluation">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+
+		insert into eval_obj_evaluation (eval_instance, eval_obj_code, rating, eval_value, description)
+		values (#{evalInstance}, #{evalObjCode}, #{rating},#{evalValue}, #{description} )
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="com.eval.pojo.EvalObjEvaluation">
+		update eval_obj_evaluation
+		set
+		<if test="evalInstance !=null and evalInstance!=''">eval_instance = #{evalInstance},</if>
+		<if test="evalObjCode !=null and evalObjCode!=''">eval_obj_code = #{evalObjCode},</if>
+		<if test="rating !=null and rating !=''">rating = #{rating},</if>
+		<if test="evalValue !=null and evalValue !=''">eval_value = #{evalValue},</if>
+		update_time = sysdate(),  
+		description = #{description}
+		where id = #{id}
+	</update>
+
+
+	<select id="selectObjMaxEvalGroupbyRating" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select eval_instance, eval_obj_code, rating, max(eval_value) as eval_value 
+		from eval_node_evaluation 
+		where eval_instance = #{evalInstance} 
+		group by eval_instance,rating
+	</select>
+
+	<select id="selectObjMinEvalGroupbyRating" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select eval_instance, eval_obj_code, rating, min(eval_value) as eval_value 
+		from eval_node_evaluation 
+		where eval_instance = #{evalInstance} 
+		group by eval_instance,rating
+	</select>
+
+	<select id="selectEvalGroupbyObjRating" parameterType="com.eval.pojo.EvalObjIndexModel" resultMap="BaseResultMap">
+		select eval_instance, eval_obj_code, 
+		rating, ${clusterFunction}(eval_value) as eval_value 
+		from eval_node_evaluation 
+		where eval_instance = #{evalInstance} 
+		group by eval_instance,rating
+	</select>
+
+	<select id="selectByCondition" parameterType="com.eval.pojo.EvalObjEvaluation" resultMap="BaseResultMap">
+		<include refid="selectAll" />
+		<where>
+			<if test='evalInstance !=null and evalInstance!=""'> and eval_instance = #{evalInstance} </if>
+			<if test="evalObjCode !=null and evalObjCode !=''"> and eval_obj_code = #{evalObjCode} </if>
+			<if test="rating !=null and rating !=''"> and rating = #{rating}</if>
+		</where> 
+	</select>
+
+</mapper>
